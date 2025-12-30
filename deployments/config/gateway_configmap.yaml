@@ -1,0 +1,188 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cas-gateway-service-env-config
+  namespace: cas
+data:
+  application.properties: |
+    server.port=8081
+    spring.application.name=cas-gateway-service
+    spring.cloud.config.enabled=false
+    spring.main.web-application-type=reactive
+    
+    # ===== Global Gateway Configuration =====
+    # Global CORS configuration (can be overridden by CorsWebFilter bean)
+    spring.cloud.gateway.globalcors.cors-configurations.[/**].allowedOrigins=*
+    spring.cloud.gateway.globalcors.cors-configurations.[/**].allowedMethods=GET,POST,PUT,DELETE,PATCH,OPTIONS
+    spring.cloud.gateway.globalcors.cors-configurations.[/**].allowedHeaders=*
+    spring.cloud.gateway.globalcors.cors-configurations.[/**].allowCredentials=true
+    
+    # Gateway metrics and monitoring
+    spring.cloud.gateway.metrics.enabled=true
+    
+    # Enable HTTP/2 if needed
+    server.http2.enabled=false
+  
+    spring.profiles.active=local
+
+  application-local.properties: |
+    #LOGIN SERVICE#
+    spring.cloud.gateway.routes[0].id=cas-login-service
+    spring.cloud.gateway.routes[0].uri=http://cas-login-service:80
+    spring.cloud.gateway.routes[0].predicates[0]=Path=/cas-login/auth/authenticate
+    
+    #ADMIN SERVICE#
+    spring.cloud.gateway.routes[1].id=cas-admin-portal
+    spring.cloud.gateway.routes[1].uri=http://cas-admin-portal:80
+    spring.cloud.gateway.routes[1].predicates[0]=Path=/cas-admin/api/**
+    spring.cloud.gateway.routes[1].filters[0]=AuthenticationFilter
+    
+    #EXTERNAL SERVICE#
+    spring.cloud.gateway.routes[2].id=cas-external-services
+    spring.cloud.gateway.routes[2].uri=http://cas-external-services:80
+    spring.cloud.gateway.routes[2].predicates[0]=Path=/cas/api/external/**
+    #spring.cloud.gateway.routes[2].filters[0]=AuthenticationFilter
+    
+    ##LEAD SERVICE#
+    spring.cloud.gateway.routes[3].id=cas-lead
+    spring.cloud.gateway.routes[3].uri=http://cas-lead:80
+    spring.cloud.gateway.routes[3].predicates[0]=Path=/cas/api/lead/**
+    #spring.cloud.gateway.routes[3].filters[0]=AuthenticationFilter
+    
+    #CUSTOMER SERVICE#
+    spring.cloud.gateway.routes[4].id=cas-customer
+    spring.cloud.gateway.routes[4].uri=http://cas-customer:80
+    spring.cloud.gateway.routes[4].predicates[0]=Path=/cas/api/customer/**
+    #spring.cloud.gateway.routes[4].filters[0]=AuthenticationFilter
+    
+    # Required to generate Swagger UI & API docs
+    springdoc.api-docs.enabled=true
+    springdoc.swagger-ui.enabled=true
+    
+    # Optional: If you have custom servlet path
+    springdoc.swagger-ui.path=/swagger-ui.html
+    springdoc.api-docs.path=/v3/api-docs
+    springdoc.api-docs.version=OPENAPI_3_0
+    
+    
+    logging.path=logs/
+    logging.common-name=cas_gateway_service_LOG
+    logging.error-name=cas_gateway_service_ERROR_LOG
+
+  application-dev.properties: |
+    #LOGIN SERVICE#
+    spring.cloud.gateway.routes[0].id=cas-login-service
+    spring.cloud.gateway.routes[0].uri=http://cas-login-service:80
+    spring.cloud.gateway.routes[0].predicates[0]=Path=/cas-login/auth/authenticate
+    
+    #ADMIN SERVICE#
+    spring.cloud.gateway.routes[1].id=cas-admin-portal
+    spring.cloud.gateway.routes[1].uri=http://cas-admin-portal:80
+    spring.cloud.gateway.routes[1].predicates[0]=Path=/cas-admin/api/**
+    spring.cloud.gateway.routes[1].filters[0]=AuthenticationFilter
+    
+    #EXTERNAL SERVICE#
+    spring.cloud.gateway.routes[2].id=cas-external-services
+    spring.cloud.gateway.routes[2].uri=http://cas-external-services:80
+    spring.cloud.gateway.routes[2].predicates[0]=Path=/cas/api/external/**
+    #spring.cloud.gateway.routes[2].filters[0]=AuthenticationFilter
+    
+    ##LEAD SERVICE#
+    spring.cloud.gateway.routes[3].id=cas-lead
+    spring.cloud.gateway.routes[3].uri=http://cas-lead:80
+    spring.cloud.gateway.routes[3].predicates[0]=Path=/cas/api/lead/**
+    #spring.cloud.gateway.routes[3].filters[0]=AuthenticationFilter
+    
+    #CUSTOMER SERVICE#
+    spring.cloud.gateway.routes[4].id=cas-customer
+    spring.cloud.gateway.routes[4].uri=http://cas-customer:80
+    spring.cloud.gateway.routes[4].predicates[0]=Path=/cas/api/customer/**
+    #spring.cloud.gateway.routes[4].filters[0]=AuthenticationFilter
+    
+    # Required to generate Swagger UI & API docs
+    springdoc.api-docs.enabled=true
+    springdoc.swagger-ui.enabled=true
+    
+    # Optional: If you have custom servlet path
+    springdoc.swagger-ui.path=/swagger-ui.html
+    springdoc.api-docs.path=/v3/api-docs
+    springdoc.api-docs.version=OPENAPI_3_0
+
+  application-live.properties: |
+    #LOGIN SERVICE#
+    spring.cloud.gateway.routes[0].id=cas-login-service
+    spring.cloud.gateway.routes[0].uri=http://cas-login-service:80
+    spring.cloud.gateway.routes[0].predicates[0]=Path=/cas-login/auth/authenticate
+    
+    #ADMIN SERVICE#
+    spring.cloud.gateway.routes[1].id=cas-admin-portal
+    spring.cloud.gateway.routes[1].uri=http://cas-admin-portal:80
+    spring.cloud.gateway.routes[1].predicates[0]=Path=/cas-admin/api/**
+    spring.cloud.gateway.routes[1].filters[0]=AuthenticationFilter
+    
+    #EXTERNAL SERVICE#
+    spring.cloud.gateway.routes[2].id=cas-external-services
+    spring.cloud.gateway.routes[2].uri=http://cas-external-services:80
+    spring.cloud.gateway.routes[2].predicates[0]=Path=/cas/api/external/**
+    #spring.cloud.gateway.routes[2].filters[0]=AuthenticationFilter
+    
+    ##LEAD SERVICE#
+    spring.cloud.gateway.routes[3].id=cas-lead
+    spring.cloud.gateway.routes[3].uri=http://cas-lead:80
+    spring.cloud.gateway.routes[3].predicates[0]=Path=/cas/api/lead/**
+    #spring.cloud.gateway.routes[3].filters[0]=AuthenticationFilter
+    
+    #CUSTOMER SERVICE#
+    spring.cloud.gateway.routes[4].id=cas-customer
+    spring.cloud.gateway.routes[4].uri=http://cas-customer:80
+    spring.cloud.gateway.routes[4].predicates[0]=Path=/cas/api/customer/**
+    #spring.cloud.gateway.routes[4].filters[0]=AuthenticationFilter
+    
+    # Required to generate Swagger UI & API docs
+    springdoc.api-docs.enabled=true
+    springdoc.swagger-ui.enabled=true
+    
+    # Optional: If you have custom servlet path
+    springdoc.swagger-ui.path=/swagger-ui.html
+    springdoc.api-docs.path=/v3/api-docs
+    springdoc.api-docs.version=OPENAPI_3_0
+    
+  application-stg.properties: |
+    #LOGIN SERVICE#
+    spring.cloud.gateway.routes[0].id=cas-login-service
+    spring.cloud.gateway.routes[0].uri=http://cas-login-service:80
+    spring.cloud.gateway.routes[0].predicates[0]=Path=/cas-login/auth/authenticate
+    
+    #ADMIN SERVICE#
+    spring.cloud.gateway.routes[1].id=cas-admin-portal
+    spring.cloud.gateway.routes[1].uri=http://cas-admin-portal:80
+    spring.cloud.gateway.routes[1].predicates[0]=Path=/cas-admin/api/**
+    spring.cloud.gateway.routes[1].filters[0]=AuthenticationFilter
+    
+    #EXTERNAL SERVICE#
+    spring.cloud.gateway.routes[2].id=cas-external-services
+    spring.cloud.gateway.routes[2].uri=http://cas-external-services:80
+    spring.cloud.gateway.routes[2].predicates[0]=Path=/cas/api/external/**
+    #spring.cloud.gateway.routes[2].filters[0]=AuthenticationFilter
+    
+    ##LEAD SERVICE#
+    spring.cloud.gateway.routes[3].id=cas-lead
+    spring.cloud.gateway.routes[3].uri=http://cas-lead:80
+    spring.cloud.gateway.routes[3].predicates[0]=Path=/cas/api/lead/**
+    #spring.cloud.gateway.routes[3].filters[0]=AuthenticationFilter
+    
+    #CUSTOMER SERVICE#
+    spring.cloud.gateway.routes[4].id=cas-customer
+    spring.cloud.gateway.routes[4].uri=http://cas-customer:80
+    spring.cloud.gateway.routes[4].predicates[0]=Path=/cas/api/customer/**
+    #spring.cloud.gateway.routes[4].filters[0]=AuthenticationFilter
+    
+    # Required to generate Swagger UI & API docs
+    springdoc.api-docs.enabled=true
+    springdoc.swagger-ui.enabled=true
+    
+    # Optional: If you have custom servlet path
+    springdoc.swagger-ui.path=/swagger-ui.html
+    springdoc.api-docs.path=/v3/api-docs
+    springdoc.api-docs.version=OPENAPI_3_0
+

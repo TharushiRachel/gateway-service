@@ -1,0 +1,78 @@
+# ====================================================================
+# DEPRECATED: This Ingress resource is deprecated.
+# The cas-gateway-service now acts as the ingress controller and
+# handles all routing to backend services via Spring Cloud Gateway.
+# 
+# The gateway service is exposed via LoadBalancer service at:
+# - Service: cas-gateway-service
+# - Port: 80 (external) -> 8081 (internal)
+# - All routes are configured in Spring Cloud Gateway routes
+#
+# This file is kept for reference only. To use the gateway service
+# as ingress, ensure the cas-gateway-service LoadBalancer service
+# is properly configured and accessible.
+# ====================================================================
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cas-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # If your services expect root paths, uncomment and manage per-path rewrites:
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - api.example.com
+      secretName: api-example-com-tls
+  rules:
+    - host: api.example.com
+      http:
+        paths:
+          # All traffic now routes through cas-gateway-service
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cas-gateway-service
+                port:
+                  number: 80
+          # Legacy routes below - kept for reference, not used
+          # - path: /cas-login/auth/authenticate
+          #   pathType: ImplementationSpecific
+          #   backend:
+          #     service:
+          #       name: cas-login-service
+          #       port:
+          #         number: 80
+          # - path: /cas-admin/api/
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: cas-admin-portal
+          #       port:
+          #         number: 80
+          # - path: /cas/api/external/
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: cas-external-services
+          #       port:
+          #         number: 80
+          # - path: /cas/api/lead/
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: cas-lead
+          #       port:
+          #         number: 80
+          # - path: /cas/api/customer/
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: cas-customer
+          #       port:
+          #         number: 80

@@ -1,0 +1,24 @@
+name: Developer Env - CI Deployment Pipeline
+on:
+  push:
+    branches:
+      - feature/gateway
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  CI:
+    uses: sampathbankplc/devops-central-repository/.github/workflows/dev-tanzu-maven-deploy.yaml@main
+    with:
+      environment: dev-integration
+      cluster-namespace: cas
+    secrets:
+      DEV_ARGOCD_SERVER: ${{ secrets.DEV_ARGOCD_SERVER }}
+      DEV_ARGOCD_USERNAME: ${{ secrets.DEV_ARGOCD_USERNAME }}
+      DEV_ARGOCD_PASSWORD: ${{ secrets.DEV_ARGOCD_PASSWORD }}
+      TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+      COMMON_USER: ${{ secrets.COMMON_USER }}
+      COMMON_USER_TOKEN: ${{ secrets.COMMON_USER_TOKEN }}
+      SONAR_QUBE_TOKEN: ${{ secrets.SONAR_QUBE_TOKEN }}
